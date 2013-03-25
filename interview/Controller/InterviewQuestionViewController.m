@@ -20,6 +20,7 @@
 #import "UIButton+Position.h"
 #import "UIPopoverController+iPhone.h"
 #import "ScrapPopoverViewController.h"
+#import "Scrap.h"
 
 @interface InterviewQuestionViewController ()
 
@@ -64,12 +65,8 @@
     if(self.interview) {
         [self bindInterviewInfo];
     }
-    
-    if(IS_iPhone_5){
         
-    } else {
-        
-    }
+    [self initScrapData];
     
     UIButton *addButton = [UIButton buttonWithType:UIButtonTypeCustom];
     //[addButton setTitle:@"추가" forState:UIControlStateNormal];
@@ -155,6 +152,8 @@
     NSLog(@"dismissPopover");
     [self.scrapPopover dismissPopoverAnimated:YES];
     
+    //데이타
+    
 }
 
 - (void)initScrapData {
@@ -165,32 +164,21 @@
     
     NSArray *items = [self.managedObjectContext executeFetchRequest:request error:&error];
     
-    for(NSManagedObject *item in items) {
-        
-        NSLog(@"delete interviewQuestion=%@", item);
-        [self.managedObjectContext deleteObject:item];
+    BOOL isExist = NO;
+    if(items){
+        if (items.count > 0) {
+            isExist = YES;
+        }
     }
     
-    entiryDescription = [NSEntityDescription entityForName:@"Interview" inManagedObjectContext:self.managedObjectContext];
-    [request setEntity:entiryDescription];
-    
-    items = [self.managedObjectContext executeFetchRequest:request error:&error];
-    
-    [request release];
-    
-    for(NSManagedObject *item in items) {
+    if (isExist == NO) {
         
-        NSLog(@"delete interview=%@", item);
-        [self.managedObjectContext deleteObject:item];
-        
-    }
-    
-    [self reloadFetch];
-    [self.table reloadData];
-    
-    if (![self.managedObjectContext save:&error])
-    {
-        NSLog(@"Problem deleting destination: %@", [error localizedDescription]);
+        for (int i=0; i<3; i++) {
+            Scrap *s = [NSEntityDescription insertNewObjectForEntityForName:@"Scrap" inManagedObjectContext:self.managedObjectContext];
+            s.name = [NSString stringWithFormat:@"Scrap %d", i+1];
+            
+            [self.managedObjectContext save:&error];
+        }
     }
 }
 
