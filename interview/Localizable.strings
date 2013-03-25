@@ -1,0 +1,27 @@
+/* 
+  Localizable.strings
+  interview
+
+  Created by 김규완 on 13. 2. 28..
+  Copyright (c) 2013년 coelsoft. All rights reserved.
+*/
+/* Toggle camera button title */
+"Camera" = "Camera";
+
+/* Video recording unavailable failure reason */
+"Movies recorded on this device will only contain audio. They will be accessible through iTunes file sharing." = "Movies recorded on this device will only contain audio. They will be accessible through iTunes file sharing.";
+
+/* OK button title */
+"OK" = "확인";
+
+/* Capture still image button title */
+"Photo" = "Photo";
+
+/* Toggle recording button record title */
+"Record" = "면접시작";
+
+/* Toggle recording button stop title */
+"Stop" = "중지";
+
+/* Video recording unavailable description */
+"Video recording unavailable" = "녹화를 할 수 없습니다";

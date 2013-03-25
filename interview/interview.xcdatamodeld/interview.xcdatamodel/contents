@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="2061" systemVersion="12D78" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="Interview" representedClassName="Interview" syncable="YES">
+        <attribute name="age" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="applyField" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="filename" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="fileUrl" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="interviewCategory" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="interviewType" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="major" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="regdate" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="school" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="sex" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="interviewQuestion" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="InterviewQuestion" inverseName="interview" inverseEntity="InterviewQuestion" syncable="YES"/>
+    </entity>
+    <entity name="InterviewQuestion" representedClassName="InterviewQuestion" syncable="YES">
+        <attribute name="categoryID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="elapsedTime" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="filename" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="qno" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="interview" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Interview" inverseName="interviewQuestion" inverseEntity="Interview" syncable="YES"/>
+    </entity>
+    <entity name="Scrap" representedClassName="Scrap" syncable="YES">
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="scrapQuestion" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ScrapQuestion" inverseName="scrap" inverseEntity="ScrapQuestion" syncable="YES"/>
+    </entity>
+    <entity name="ScrapQuestion" representedClassName="ScrapQuestion" syncable="YES">
+        <attribute name="elapsedTime" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="filename" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="qno" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="scrap" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Scrap" inverseName="scrapQuestion" inverseEntity="Scrap" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Interview" positionX="-461" positionY="-153" width="128" height="223"/>
+        <element name="InterviewQuestion" positionX="-281" positionY="-180" width="128" height="135"/>
+        <element name="Scrap" positionX="-216" positionY="92" width="128" height="73"/>
+        <element name="ScrapQuestion" positionX="-18" positionY="99" width="128" height="118"/>
+    </elements>
+</model>
