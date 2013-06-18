@@ -15,6 +15,7 @@
 #define kUserSex        @"usersex"
 #define kUserAge        @"userage"
 #define kAnswerTerm     @"answerTerm"
+#define kBirthDay       @"birthDay"
 
 
 @interface SettingProperties : NSObject<NSCoding, NSCopying> {
@@ -29,5 +30,6 @@
 @property (nonatomic, retain) NSString *userSex;
 @property (nonatomic, retain) NSString *userAge;
 @property (nonatomic, retain) NSString *answerTerm;
+@property (nonatomic, retain) NSString *birthDay;
 
 @end

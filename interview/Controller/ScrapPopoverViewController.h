@@ -9,9 +9,18 @@
 #import <UIKit/UIKit.h>
 @class InterviewQuestionViewController;
 
+@protocol PopoverClose
+
+- (void)dismissPopover:(int)selectedRow;
+
+@end
+
 @interface ScrapPopoverViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 
-@property (nonatomic, retain) InterviewQuestionViewController *parent;
+@property (nonatomic, retain) UIViewController *parent;
 @property (nonatomic, assign) int selectedScrapNo;
 
 @end
+
+
+

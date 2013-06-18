@@ -14,11 +14,13 @@
 #import "AlertUtils.h"
 #import "RecordReadyController.h"
 #import "InterviewInfoViewController.h"
+#import "HttpManager.h"
 
-@interface InterviewListController ()
+@interface InterviewListController () <HttpManagerDelegate>
 
 @property (nonatomic, retain) IBOutlet UITableView *table;
 @property (nonatomic, retain) NSArray *interviewList;
+@property (nonatomic, retain) HttpManager *httpManager;
 
 - (void)bindInterviewList;
 
@@ -48,6 +50,8 @@
     self.table.backgroundColor = [UIColor clearColor];
     
     self.view.backgroundColor = [UIColor clearColor];
+    self.httpManager = [HttpManager sharedManager];
+    self.httpManager.delegate = self;
     
     //네비게이션 바 버튼 설정
     /*
@@ -77,14 +81,8 @@
     self.categoryID =nil;
     self.interviewList =nil;
     self.categoryName = nil;
-    
+    self.httpManager = nil;
 }
-
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
-{
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
-}
-
 
 #pragma mark -
 #pragma mark Custom Method
@@ -95,33 +93,13 @@
 
 - (void)bindInterviewList {
 
-    NSString *url = [kServerUrl stringByAppendingFormat:@"%@?up_category_id=%@", kInterviewCategoryUrl, self.categoryID];
-	
-	HTTPRequest *httpRequest = [[AppDelegate sharedAppDelegate] httpRequest];
-	NSLog(@"bindInterview url = %@", url);
-	
-    //통신완료 후 호출할 델리게이트 셀렉터 설정
-	[httpRequest setDelegate:self selector:@selector(didReceiveFinished:)];
-	[httpRequest requestUrl:url bodyObject:nil httpMethod:@"GET" withTag:nil];
-    
-    /*
-     NSError *error = nil;
-     NSHTTPURLResponse *response = nil;
-     NSData *responseData = [httpRequest requestUrlSync:url bodyObject:nil httpMethod:@"GET" error:error response:response];
-     NSString *resultData = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
-     [self didNoticeReceiveFinished:resultData];
-     */
+    [self.httpManager requestCategoryByUp:self.categoryID];
 }
 
 #pragma mark -
 #pragma mark HTTPRequest delegate
-- (void)didReceiveFinished:(NSString *)result {
-	//NSLog(@"receiveData : %@", result);
-	
-	// JSON형식 문자열로 Dictionary생성
-	SBJsonParser *jsonParser = [SBJsonParser new];
-	
-	self.interviewList = (NSArray *)[jsonParser objectWithString:result];
+- (void)bindCategoryData:(NSMutableArray *)categoryData {
+	self.interviewList = categoryData;
     NSLog(@"didReceiveFinished interviewList count %d", [self.interviewList count]);
     [self.table reloadData];
     

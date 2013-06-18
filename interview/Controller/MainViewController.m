@@ -106,7 +106,7 @@
             SettingsController *setting = [[SettingsController alloc] initWithNibName:@"SettingsController" bundle:nil];
             UINavigationController *tab5Navi = [[UINavigationController alloc] initWithRootViewController:setting];
             [[tab5Navi tabBarItem] setImage:[UIImage imageNamed:@"19-gear"]];
-            [[tab5Navi tabBarItem] setTitle:@"환경설정"];
+            [[tab5Navi tabBarItem] setTitle:@"면접설정"];
             [setting release];
             
             if([tab5Navi.navigationBar respondsToSelector:@selector(setBackgroundImage:forBarMetrics:)]) {

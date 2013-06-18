@@ -18,5 +18,6 @@
 @dynamic categoryID;
 @dynamic elapsedTime;
 @dynamic interview;
+@dynamic seq;
 
 @end

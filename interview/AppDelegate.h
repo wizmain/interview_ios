@@ -20,7 +20,7 @@
 @property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
 @property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 
-@property (nonatomic, retain, readonly) HTTPRequest *httpRequest;
+//@property (nonatomic, retain, readonly) HTTPRequest *httpRequest;
 @property (nonatomic, retain, readonly) NSString *version;
 @property (nonatomic, retain) MainViewController *mainViewController;
 @property (nonatomic, retain) LoginViewController *loginViewController;
@@ -28,6 +28,7 @@
 @property (nonatomic, retain) NSString *authUserID;
 @property (nonatomic, assign) int authUserNo;
 @property (nonatomic, assign) int authGroup;
+@property (nonatomic, getter = isAlertRunning) BOOL alertRunning;
 
 - (void)saveContext;
 - (NSURL *)applicationDocumentsDirectory;
@@ -37,5 +38,5 @@
 - (void)switchLoginView;
 - (BOOL)isCellNetwork;
 - (BOOL)isNetworkReachable;
-
+- (NSString *)deviceUuid;
 @end

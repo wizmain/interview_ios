@@ -28,7 +28,7 @@
     [mainViewController release];
     [loginViewController release];
     [authUserID release];
-    [httpRequest release];
+    //[httpRequest release];
     [version release];
     
     [super dealloc];
@@ -39,8 +39,8 @@
 @synthesize persistentStoreCoordinator = _persistentStoreCoordinator;
 
 @synthesize mainViewController, loginViewController;
-@synthesize authUserID, version;
-@synthesize httpRequest;
+@synthesize authUserID, version, alertRunning;
+//@synthesize httpRequest;
 
 
 + (AppDelegate *)sharedAppDelegate {
@@ -57,7 +57,7 @@
     
     version = [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString*)kCFBundleVersionKey];
     
-    httpRequest = [[HTTPRequest alloc] init];
+    //httpRequest = [[HTTPRequest alloc] init];
     
     if([Utils isNullString:version]){
         version = @"0.0.0";
@@ -86,7 +86,9 @@
         //self.loginViewController.view.frame = CGRectMake(rect.origin.x, rect.origin.y+20, rect.size.width, rect.size.height);
 	}
     
-	[self.window addSubview:self.mainViewController.view];
+    
+    
+	[self.window addSubview:self.loginViewController.view];
     
     [self.window makeKeyAndVisible];
     return YES;
@@ -172,38 +174,43 @@
         return _persistentStoreCoordinator;
     }
     
+    NSError *error = nil;
     NSURL *storeURL = [[self applicationDocumentsDirectory] URLByAppendingPathComponent:@"interview.sqlite"];
     
-    NSError *error = nil;
-    _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
-    if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error]) {
-        /*
-         Replace this implementation with code to handle the error appropriately.
-         
-         abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. 
-         
-         Typical reasons for an error here include:
-         * The persistent store is not accessible;
-         * The schema for the persistent store is incompatible with current managed object model.
-         Check the error message to determine what the actual problem was.
-         
-         
-         If the persistent store is not accessible, there is typically something wrong with the file path. Often, a file URL is pointing into the application's resources directory instead of a writeable directory.
-         
-         If you encounter schema incompatibility errors during development, you can reduce their frequency by:
-         * Simply deleting the existing store:
-         [[NSFileManager defaultManager] removeItemAtURL:storeURL error:nil]
-         
-         * Performing automatic lightweight migration by passing the following dictionary as the options parameter:
-         @{NSMigratePersistentStoresAutomaticallyOption:@YES, NSInferMappingModelAutomaticallyOption:@YES}
-         
-         Lightweight migration will only work for a limited set of schema changes; consult "Core Data Model Versioning and Data Migration Programming Guide" for details.
-         
-         */
-        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
-        abort();
-    }    
+    NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:YES], NSMigratePersistentStoresAutomaticallyOption,
+                             [NSNumber numberWithBool:YES], NSInferMappingModelAutomaticallyOption, nil];
     
+    if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:options error:&error]) {
+        
+        _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:[self managedObjectModel]];
+        if (![_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType configuration:nil URL:storeURL options:nil error:&error]) {
+            /*
+             Replace this implementation with code to handle the error appropriately.
+             
+             abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development. 
+             
+             Typical reasons for an error here include:
+             * The persistent store is not accessible;
+             * The schema for the persistent store is incompatible with current managed object model.
+             Check the error message to determine what the actual problem was.
+             
+             
+             If the persistent store is not accessible, there is typically something wrong with the file path. Often, a file URL is pointing into the application's resources directory instead of a writeable directory.
+             
+             If you encounter schema incompatibility errors during development, you can reduce their frequency by:
+             * Simply deleting the existing store:
+             [[NSFileManager defaultManager] removeItemAtURL:storeURL error:nil]
+             
+             * Performing automatic lightweight migration by passing the following dictionary as the options parameter:
+             @{NSMigratePersistentStoresAutomaticallyOption:@YES, NSInferMappingModelAutomaticallyOption:@YES}
+             
+             Lightweight migration will only work for a limited set of schema changes; consult "Core Data Model Versioning and Data Migration Programming Guide" for details.
+             
+             */
+            NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+            abort();
+        }    
+    }
     return _persistentStoreCoordinator;
 }
 
@@ -296,5 +303,24 @@
     }
 }
 
-
+- (NSString *)deviceUuid {
+    UIDevice *dev = [UIDevice currentDevice];
+	NSString *deviceUuid;
+	if ([dev respondsToSelector:@selector(uniqueIdentifier)])
+		deviceUuid = dev.uniqueIdentifier;
+	else {
+		NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+		id uuid = [defaults objectForKey:@"deviceUuid"];
+		if (uuid)
+			deviceUuid = (NSString *)uuid;
+		else {
+			CFStringRef cfUuid = CFUUIDCreateString(NULL, CFUUIDCreate(NULL));
+			deviceUuid = (NSString *)cfUuid;
+			CFRelease(cfUuid);
+			[defaults setObject:deviceUuid forKey:@"deviceUuid"];
+		}
+	}
+    
+    return deviceUuid;
+}
 @end

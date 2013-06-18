@@ -24,12 +24,13 @@
 #import "JSON.h"
 #import "Interview.h"
 #import "InterviewQuestion.h"
+#import "HttpManager.h"
 
 #define kRequestQuestionCnt     6
 
 static void *AVCamFocusModeObserverContext = &AVCamFocusModeObserverContext;
 
-@interface InterviewRecordViewController ()
+@interface InterviewRecordViewController () <HttpManagerDelegate>
 
 @property (nonatomic, retain) NSTimer *timer;
 @property (nonatomic, assign) int defaultAnswerTime;//기본 답변 시간
@@ -39,6 +40,7 @@ static void *AVCamFocusModeObserverContext = &AVCamFocusModeObserverContext;
 @property (nonatomic, retain) SettingProperties *settings;
 @property (nonatomic, retain) NSManagedObjectContext *managedObjectContext;
 @property (nonatomic, assign) BOOL isClose;
+@property (nonatomic, retain) HttpManager *httpManager;
 
 @end
 
@@ -91,6 +93,8 @@ static void *AVCamFocusModeObserverContext = &AVCamFocusModeObserverContext;
     [self.spinner startAnimating];
     //인터뷰 설정
     self.settings = [Utils settingProperties];
+    self.httpManager = [HttpManager sharedManager];
+    self.httpManager.delegate = self;
     
     self.managedObjectContext = [[AppDelegate sharedAppDelegate] managedObjectContext];
     //총질문갯수
@@ -132,7 +136,13 @@ static void *AVCamFocusModeObserverContext = &AVCamFocusModeObserverContext;
     //[self setupAudioStreamer];
     //표준 질문 가져오기
     //[self requestStandardQuestion];
-    [self setInterviewQuestion];
+    
+    if (self.questionList) {
+        totalQuestion = self.questionList.count;
+        [self.spinner stopAnimating];
+    } else {
+        [self setInterviewQuestion];
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -328,6 +338,7 @@ static void *AVCamFocusModeObserverContext = &AVCamFocusModeObserverContext;
             [self.questionText setText:[q valueForKey:@"Q_TITLE"]];
             
             NSLog(@"elapsedtime=%@", [NSString stringWithFormat:@"%@",[q objectForKey:@"ELAPSED_TIME"]]);
+          
             if([Utils isNullString:[NSString stringWithFormat:@"%@",[q objectForKey:@"ELAPSED_TIME"]]]){
                 [self.answerTimeInfoBarButton setTitle:[NSString stringWithFormat:@"%d초",self.defaultAnswerTime]];
                 
@@ -403,40 +414,21 @@ static void *AVCamFocusModeObserverContext = &AVCamFocusModeObserverContext;
     }
 }
 
-//표준 카테고리 문항 셋팅
-//서버에서 데이타 가져옴
-- (void)requestStandardQuestion {
+- (void)bindQuestionData:(NSMutableArray *)questionData {
     
-    NSString *url = [kServerUrl stringByAppendingFormat:@"%@", kQuestionStandardUrl];
-	
-	HTTPRequest *httpRequest = [[AppDelegate sharedAppDelegate] httpRequest];
-	NSLog(@"bindInterview url = %@", url);
-	
-    //통신완료 후 호출할 델리게이트 셀렉터 설정
-	[httpRequest setDelegate:self selector:@selector(didReceiveFinished:)];
-	[httpRequest requestUrl:url bodyObject:nil httpMethod:@"GET" withTag:nil];
+    self.questionList = questionData;
     
-    /*
-     NSError *error = nil;
-     NSHTTPURLResponse *response = nil;
-     NSData *responseData = [httpRequest requestUrlSync:url bodyObject:nil httpMethod:@"GET" error:error response:response];
-     NSString *resultData = [[NSString alloc] initWithData:responseData encoding:NSUTF8StringEncoding];
-     [self didNoticeReceiveFinished:resultData];
-     */
+    if(self.questionList){
+        totalQuestion = [self.questionList count];
+    } else {
+        totalQuestion = 0;
+    }
+    
+    //녹화버튼 상태 업데이트
+    [self updateButtonStates];
+    
+    [self.spinner stopAnimating];
 }
-//질문데이타 서버에서 가져옴
-- (void)requestQuestion:(NSString *)url {
-    
-    //NSString *url = [kServerUrl stringByAppendingFormat:@"%@?up_category_id=%@&cnt=%d", kQuestionRandByUpUrl, categoryID, count];
-	
-	HTTPRequest *httpRequest = [[AppDelegate sharedAppDelegate] httpRequest];
-	NSLog(@"bindInterview url = %@", url);
-	
-    //통신완료 후 호출할 델리게이트 셀렉터 설정
-	[httpRequest setDelegate:self selector:@selector(didReceiveFinished:)];
-	[httpRequest requestUrl:url bodyObject:nil httpMethod:@"GET" withTag:nil];
-}
-
 
 - (void)setInterviewQuestion {
     
@@ -445,13 +437,13 @@ static void *AVCamFocusModeObserverContext = &AVCamFocusModeObserverContext;
     }
 
     if([self.categoryID isEqualToString:@"A"]){//표준
-        [self requestStandardQuestion];
+        [self.httpManager requestStandardQuestion];
     } else if([self.categoryID isEqualToString:@"AA"] || [self.categoryID isEqualToString:@"AB"] || [self.categoryID isEqualToString:@"AC"] || [self.categoryID isEqualToString:@"AD"] || [self.categoryID isEqualToString:@"AE"] || [self.categoryID isEqualToString:@"AF"] || [self.categoryID isEqualToString:@"AG"] || [self.categoryID isEqualToString:@"C"]){
         NSString *url = [kServerUrl stringByAppendingFormat:@"%@?up_category_id=%@&cnt=%d", kQuestionRandByUpUrl, self.categoryID, kRequestQuestionCnt];
-        [self requestQuestion:url];
+        [self.httpManager requestQuestionData:url];
     } else {
         NSString *url = [kServerUrl stringByAppendingFormat:@"%@?up_category_id=%@&cnt=%d", kQuestionRandUrl, self.categoryID, kRequestQuestionCnt];
-        [self requestQuestion:url];
+        [self.httpManager requestQuestionData:url];
     }
 }
 
@@ -487,6 +479,7 @@ static void *AVCamFocusModeObserverContext = &AVCamFocusModeObserverContext;
             
             //InterviewQuestion *q = [[InterviewQuestion alloc] init];
             InterviewQuestion *q = [NSEntityDescription insertNewObjectForEntityForName:@"InterviewQuestion" inManagedObjectContext:self.managedObjectContext];
+            q.seq = [NSNumber numberWithInt:i+1];
             q.title = [d objectForKey:@"Q_TITLE"];
             q.qno = [NSNumber numberWithInteger:[[NSString stringWithFormat:@"%@",[d objectForKey:@"Q_NO"]] integerValue]];
             q.filename = [d objectForKey:@"Q_FILENAME"];
@@ -574,27 +567,7 @@ static void *AVCamFocusModeObserverContext = &AVCamFocusModeObserverContext;
 
 }
 
-#pragma mark -
-#pragma mark HTTPRequest delegate
-- (void)didReceiveFinished:(NSString *)result {
-	//NSLog(@"receiveData : %@", result);
-	
-	// JSON형식 문자열로 Dictionary생성
-	SBJsonParser *jsonParser = [SBJsonParser new];
-	
-	self.questionList = (NSArray *)[jsonParser objectWithString:result];
-    NSLog(@"didReceiveFinished questionList count %d", [self.questionList count]);
-    if(self.questionList){
-        totalQuestion = [self.questionList count];
-    } else {
-        totalQuestion = 0;
-    }
-    
-    //녹화버튼 상태 업데이트
-    [self updateButtonStates];
-    
-    [self.spinner stopAnimating];
-}
+
 
 
 

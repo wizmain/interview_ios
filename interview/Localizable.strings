@@ -21,7 +21,7 @@
 "Record" = "면접시작";
 
 /* Toggle recording button stop title */
-"Stop" = "중지";
+"Stop" = "면접완료";
 
 /* Video recording unavailable description */
 "Video recording unavailable" = "녹화를 할 수 없습니다";

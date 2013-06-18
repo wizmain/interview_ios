@@ -30,6 +30,7 @@
         <attribute name="elapsedTime" optional="YES" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="filename" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="qno" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="seq" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="title" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="scrap" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Scrap" inverseName="scrapQuestion" inverseEntity="Scrap" syncable="YES"/>
     </entity>
@@ -37,6 +38,6 @@
         <element name="Interview" positionX="-461" positionY="-153" width="128" height="223"/>
         <element name="InterviewQuestion" positionX="-281" positionY="-180" width="128" height="135"/>
         <element name="Scrap" positionX="-216" positionY="92" width="128" height="73"/>
-        <element name="ScrapQuestion" positionX="-18" positionY="99" width="128" height="118"/>
+        <element name="ScrapQuestion" positionX="-18" positionY="99" width="128" height="135"/>
     </elements>
 </model>

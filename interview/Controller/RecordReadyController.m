@@ -79,6 +79,13 @@
     self.navigationItem.title = @"인터뷰정보";
     self.setting = [Utils settingProperties];
     
+    self.userSchoolText.text = self.setting.schoolName;
+    self.userNameText.text = self.setting.userName;
+    self.userAgeText.text = self.setting.userAge;
+    self.userSexText.text = self.setting.userSex;
+    self.applyFieldText.text = self.setting.applyField;
+    self.userMajorText.text = self.setting.majorName;
+    
 }
 
 - (void)viewDidUnload
@@ -135,6 +142,30 @@
 {
     
     SettingProperties *s = [[SettingProperties alloc] init];
+    
+    /*
+     @property (nonatomic, retain) NSString *userName;
+     @property (nonatomic, retain) NSString *schoolName;
+     @property (nonatomic, retain) NSString *majorName;
+     @property (nonatomic, retain) NSString *hakbun;
+     @property (nonatomic, retain) NSString *applyField;
+     @property (nonatomic, retain) NSString *userSex;
+     @property (nonatomic, retain) NSString *userAge;
+     @property (nonatomic, retain) NSString *answerTerm;
+     @property (nonatomic, retain) NSString *birthDay;
+    */
+    
+    if (self.setting) {
+        s.userName = self.setting.userName;
+        s.schoolName = self.setting.schoolName;
+        s.majorName = self.setting.majorName;
+        s.hakbun = self.setting.hakbun;
+        s.applyField = self.setting.applyField;
+        s.userSex = self.setting.userSex;
+        s.userAge = self.setting.userAge;
+        s.answerTerm = self.setting.answerTerm;
+        s.birthDay = self.setting.birthDay;
+    }
     
     s.userName = userNameText.text;
     s.userAge = userAgeText.text;
@@ -352,7 +383,7 @@
                     //textCell.textField.enabled = NO;
 					
 					if(self.setting){
-                        textCell.textField.text = self.setting.userSex;
+                        textCell.textField.text = self.setting.userAge;
                     }
 					userAgeText = [textCell.textField retain];
 					cell = textCell;

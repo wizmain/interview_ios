@@ -19,7 +19,8 @@
 @property (nonatomic, retain) IBOutlet UIButton *button2;
 @property (nonatomic, retain) IBOutlet UIButton *button3;
 @property (nonatomic, retain) IBOutlet UIButton *button4;
-@property (nonatomic, assign) Interview *interview;
+@property (nonatomic, retain) Interview *interview;
+@property (nonatomic, retain) NSDictionary *data;
 
 @property (nonatomic,assign) id <NSObject,MovieListCellDelegate> delegate;
 

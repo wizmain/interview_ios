@@ -18,6 +18,7 @@
 @synthesize button1, button2, button3, button4;
 @synthesize delegate;
 @synthesize interview;
+@synthesize data;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -91,7 +92,10 @@
 }
 
 - (IBAction)button4Click:(id)sender {
-    AlertWithMessageAndDelegate(kAppName, @"삭제하시겠습니까?", self);
+    //AlertWithMessageAndDelegate(kAppName, @"삭제하시겠습니까?", self);
+    if ([delegate respondsToSelector:@selector(movieListCellButton4Click:)]) {
+        [delegate movieListCellButton4Click:self];
+    }
 }
 
 

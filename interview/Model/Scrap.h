@@ -14,6 +14,7 @@
 @interface Scrap : NSManagedObject
 
 @property (nonatomic, retain) NSString * name;
+@property (nonatomic, retain) NSNumber *scrapNo;
 @property (nonatomic, retain) NSSet *scrapQuestion;
 @end
 

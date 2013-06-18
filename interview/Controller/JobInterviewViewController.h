@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface JobInterviewViewController : UIViewController
+
+@interface JobInterviewViewController : UIViewController <UITableViewDataSource, UITableViewDelegate>
 
 @end

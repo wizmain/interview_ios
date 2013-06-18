@@ -463,7 +463,7 @@
 		<dictionary class="NSMutableDictionary" key="IBDocument.LastKnownImageSizes">
 			<string key="anonymous_person.png">{100, 100}</string>
 			<string key="btn_bg_kakhi.png">{120, 60}</string>
-			<string key="btn_bg_red.png">{120, 60}</string>
+			<string key="btn_bg_red.png">{48, 30}</string>
 		</dictionary>
 		<string key="IBCocoaTouchPluginVersion">2083</string>
 	</data>

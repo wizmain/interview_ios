@@ -47,11 +47,13 @@
     self.table = nil;
 }
 
+/*
 - (void)dealloc {
     
     [_table release];
     [super dealloc];
 }
+*/
 
 
 #pragma mark -
@@ -104,8 +106,10 @@
      [v release];
      */
     NSLog(@"didSelectRowAtIndexPath");
-    self.selectedScrapNo = [indexPath row];
-    [self.parent dismissPopover:self.selectedScrapNo];
+    self.selectedScrapNo = [indexPath row] + 1;
+    if([self.parent respondsToSelector:@selector(dismissPopover:)]) {
+        [self.parent dismissPopover:self.selectedScrapNo];
+    }
     //[self dismissModalViewControllerAnimated:YES];
 }
 

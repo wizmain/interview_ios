@@ -22,6 +22,7 @@
 #import "MovieViewController.h"
 #import "MainViewController.h"
 #import "InterviewQuestionViewController.h"
+#import "MovieUploadController.h"
 
 #define kMovieListCellHeight    115
 
@@ -63,6 +64,7 @@
     imageCache = [[NSMutableDictionary alloc] init];
     self.navigationItem.title = @"영상보기";
     
+    /*
     UIButton *addButton = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     //[addButton setTitle:@"추가" forState:UIControlStateNormal];
     [addButton setImage:[UIImage imageNamed:@"20-gear"] forState:UIControlStateNormal];
@@ -70,7 +72,7 @@
     addButton.frame = CGRectMake(0, 0, 50, 30);
     self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithCustomView:addButton] autorelease];
     [addButton release];
-    
+    */
     
     self.managedObjectContext = [[AppDelegate sharedAppDelegate] managedObjectContext];
     
@@ -155,6 +157,8 @@
         NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
         abort();
     }
+    
+    [self.table reloadData];
 }
 
 - (void)deleteInterview:(MovieListCell *)cell {
@@ -620,6 +624,10 @@
 //영상등록
 - (void)movieListCellButton2Click:(MovieListCell *)cell {
     NSLog(@"button2Click");
+    MovieUploadController *upload = [[MovieUploadController alloc] initWithNibName:@"MovieUploadController" bundle:nil];
+    upload.interview = cell.interview;
+    [self.navigationController pushViewController:upload animated:YES];
+    [upload release];
 }
 
 //면접질문
@@ -632,76 +640,96 @@
     [qView release];
 }
 
+
+
 //파일삭제
 - (void)movieListCellButton4Click:(MovieListCell *)cell {
     NSLog(@"button4Click");
     
-    NSError *error = nil;
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    //AlertWithMessageAndDelegate(kAppName, @"삭제하시겠습니까?", self);
     
-    //NSString *documentsDirectory = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents"];
     
-	NSString *destinationPath = [documentsDirectory stringByAppendingFormat:@"/%@", cell.interview.filename];
-    NSLog(@"destinationPath=%@", destinationPath);
-    
-    Interview *interview = [[self fetchedResultsController] objectAtIndexPath:[self.table indexPathForCell:cell]];
-    
-    if ([fileManager fileExistsAtPath:destinationPath]) {
-        NSLog(@"file exist");
-        if ([fileManager removeItemAtPath:destinationPath error:&error] != YES) {
-            NSLog(@"Unable to delete file %@", [error localizedDescription]);
-        } else {
-            
-            [self.managedObjectContext deleteObject:interview];
-            
-            [self reloadFetch];
-            [self.table reloadData];
-            
-        }
-        
-    } else {
-        
-        [self.managedObjectContext deleteObject:interview];
-        [self reloadFetch];
-        [self.table reloadData];
-    }
-    
-    /*
-    NSFetchRequest *request = [[NSFetchRequest alloc]init];
-    NSEntityDescription *entiryDescription = [NSEntityDescription entityForName:@"InterviewQuestion" inManagedObjectContext:self.managedObjectContext];
-    [request setEntity:entiryDescription];
+	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:kAppName
+													message:@"삭제하시겠습니까?"
+												   delegate:self
+										  cancelButtonTitle:@"Cancel"
+										  otherButtonTitles: @"OK", nil];
+    NSIndexPath *indexPath = [self.table indexPathForCell:cell];
+    //[self.table select:cell];
+    alert.tag = [indexPath row];
+	[alert show];
+	[alert release];
 
-    NSArray *items = [self.managedObjectContext executeFetchRequest:request error:&error];
-    
-    [request release];
-    
-    for(NSManagedObject *item in items) {
-        
-        NSLog(@"delete interviewQuestion=%@", item);
-        [self.managedObjectContext deleteObject:item];
-    }
-    */
-    
-    
-    
-    //[self.managedObjectContext deleteObject:interview];
-    //[self.table reloadData];
-    
-    NSLog(@"Document directory: %@", [fileManager contentsOfDirectoryAtPath:documentsDirectory error:&error]);
 }
+
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    if([alertView.title isEqualToString:@"삭제"]) {
+    
 
-        if(buttonIndex == 0){
+    if(buttonIndex == 0){
+        
+    } else if(buttonIndex == 1) {
+        
+        NSError *error = nil;
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        NSString *documentsDirectory = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+        
+        //NSString *documentsDirectory = [NSHomeDirectory() stringByAppendingPathComponent:@"Documents"];
+        
+        
+        Interview *interview = [[self fetchedResultsController] objectAtIndexPath:[NSIndexPath indexPathForRow:alertView.tag inSection:0]];
+        
+        NSString *destinationPath = [documentsDirectory stringByAppendingFormat:@"/%@", interview.filename];
+        NSLog(@"destinationPath=%@", destinationPath);
+        
+        
+        if ([fileManager fileExistsAtPath:destinationPath]) {
+            NSLog(@"file exist");
+            if ([fileManager removeItemAtPath:destinationPath error:&error] != YES) {
+                NSLog(@"Unable to delete file %@", [error localizedDescription]);
+            } else {
+                
+                [self.managedObjectContext deleteObject:interview];
+                
+                [self reloadFetch];
+                [self.table reloadData];
+                
+            }
             
-        } else if(buttonIndex == 1) {
+        } else {
             
-        } else if(buttonIndex == 2) {
-            
+            [self.managedObjectContext deleteObject:interview];
+            [self reloadFetch];
+            [self.table reloadData];
         }
+        
+        /*
+         NSFetchRequest *request = [[NSFetchRequest alloc]init];
+         NSEntityDescription *entiryDescription = [NSEntityDescription entityForName:@"InterviewQuestion" inManagedObjectContext:self.managedObjectContext];
+         [request setEntity:entiryDescription];
+         
+         NSArray *items = [self.managedObjectContext executeFetchRequest:request error:&error];
+         
+         [request release];
+         
+         for(NSManagedObject *item in items) {
+         
+         NSLog(@"delete interviewQuestion=%@", item);
+         [self.managedObjectContext deleteObject:item];
+         }
+         */
+        
+        
+        
+        //[self.managedObjectContext deleteObject:interview];
+        //[self.table reloadData];
+        
+        NSLog(@"Document directory: %@", [fileManager contentsOfDirectoryAtPath:documentsDirectory error:&error]);
+        
+    } else if(buttonIndex == 2) {
+        
     }
+    
 }
 @end

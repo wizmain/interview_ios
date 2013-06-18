@@ -13,6 +13,7 @@
 @implementation Scrap
 
 @dynamic name;
+@dynamic scrapNo;
 @dynamic scrapQuestion;
 
 @end

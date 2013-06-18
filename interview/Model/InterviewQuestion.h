@@ -18,6 +18,7 @@
 @property (nonatomic, retain) NSString * filename;
 @property (nonatomic, retain) NSString * categoryID;
 @property (nonatomic, retain) NSNumber * elapsedTime;
+@property (nonatomic, retain) NSNumber * seq;
 @property (nonatomic, retain) Interview *interview;
 
 @end

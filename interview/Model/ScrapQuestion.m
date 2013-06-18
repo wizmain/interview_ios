@@ -16,5 +16,7 @@
 @dynamic filename;
 @dynamic elapsedTime;
 @dynamic scrap;
+@dynamic seq;
+@dynamic categoryID;
 
 @end

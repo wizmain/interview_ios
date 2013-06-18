@@ -11,7 +11,7 @@
 
 @implementation SettingProperties
 
-@synthesize userName, schoolName, hakbun, majorName, userAge, userSex, applyField, answerTerm;
+@synthesize userName, schoolName, hakbun, majorName, userAge, userSex, applyField, answerTerm, birthDay;
 
 
 #pragma mark NSCoding
@@ -23,7 +23,9 @@
     [aEncoder encodeObject:applyField forKey:kApplyField];
     [aEncoder encodeObject:userAge forKey:kUserAge];
     [aEncoder encodeObject:userSex forKey:kUserSex];
-	
+    [aEncoder encodeObject:answerTerm forKey:kAnswerTerm];
+	[aEncoder encodeObject:birthDay forKey:kBirthDay];
+    
 }
 
 - (id)initWithCoder:(NSCoder *)aDecoder {
@@ -36,6 +38,7 @@
         self.userAge = [aDecoder decodeObjectForKey:kUserAge];
         self.applyField = [aDecoder decodeObjectForKey:kApplyField];
         self.answerTerm = [aDecoder decodeObjectForKey:kAnswerTerm];
+        self.birthDay = [aDecoder decodeObjectForKey:kBirthDay];
 	}
 	return self;
 }
@@ -52,6 +55,7 @@
     copy.userSex = [[self.userSex copyWithZone:zone] autorelease];
     copy.userAge = [[self.userAge copyWithZone:zone] autorelease];
     copy.answerTerm = [[self.answerTerm copyWithZone:zone] autorelease];
+    copy.birthDay = [[self.birthDay copyWithZone:zone] autorelease];
 	return copy;
 }
 
